@@ -45,10 +45,9 @@ To use Iceberg, you need:
 Configuration
 -------------
 
-The connector supports two Iceberg catalog types, you may use either a Hive
-metastore service (HMS) or AWS Glue. The catalog type is determined by the
-``iceberg.catalog.type`` property, it can be set to either ``HIVE_METASTORE``
-or ``GLUE``.
+The connector supports multiple Iceberg catalog types, you may use either a Hive
+metastore service (HMS), AWS Glue or a REST catalog. The catalog type is determined by the
+``iceberg.catalog.type`` property, it can be set to ``HIVE_METASTORE`` / ``GLUE`` / ``REST``.
 
 Hive metastore catalog
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -75,6 +74,34 @@ configuration properties as the Hive connector's Glue setup. See
 
     connector.name=iceberg
     iceberg.catalog.type=glue
+
+REST catalog
+^^^^^^^^^^^^^^
+
+In order to use the Iceberg REST catalog, ensure to configure the catalog type with
+``iceberg.catalog.type=rest`` and provide further details with the following
+properties:
+
+========================================== ============================================================
+Property Name                                        Description
+========================================== ============================================================
+``iceberg.rest.uri``                       REST server API endpoint URI (required).
+                                           Example: ``http://iceberg-with-rest:8181``
+
+``iceberg.rest.token``                     The Bearer token which will be used for interactions
+                                           with the server.
+                                           Example: ``AbCdEf123456``
+
+``iceberg.rest.credential``                The credential to exchange for a token in the OAuth2 client
+                                           credentials flow with the server.
+                                           Example: ``AbCdEf123456``
+========================================== ============================================================
+
+.. code-block:: text
+
+    connector.name=iceberg
+    iceberg.catalog.type=rest
+    iceberg.rest.uri=http://iceberg-with-rest:8181
 
 
 General configuration

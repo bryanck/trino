@@ -3927,9 +3927,17 @@ public abstract class BaseIcebergConnectorTest
     public void testGetIcebergTableProperties()
     {
         assertUpdate("CREATE TABLE test_iceberg_get_table_props (x BIGINT)");
-        assertThat(query("SELECT * FROM \"test_iceberg_get_table_props$properties\""))
-                .matches(format("VALUES (VARCHAR 'write.format.default', VARCHAR '%s')", format.name()));
+        verifyIcebergTableProperties(computeActual("SELECT * FROM \"test_iceberg_get_table_props$properties\""));
         dropTable("test_iceberg_get_table_props");
+    }
+
+    protected void verifyIcebergTableProperties(MaterializedResult actual)
+    {
+        assertThat(actual).isNotNull();
+        MaterializedResult expected = resultBuilder(getSession())
+                .row("write.format.default", format.name())
+                .build();
+        assertEqualsIgnoreOrder(actual.getMaterializedRows(), expected.getMaterializedRows());
     }
 
     protected abstract boolean supportsIcebergFileStatistics(String typeName);

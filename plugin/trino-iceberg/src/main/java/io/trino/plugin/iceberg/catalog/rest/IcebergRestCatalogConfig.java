@@ -18,22 +18,30 @@ import io.airlift.configuration.ConfigDescription;
 import io.airlift.configuration.ConfigSecuritySensitive;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import java.net.URI;
 import java.util.Optional;
 
 public class IcebergRestCatalogConfig
 {
+    public enum Security
+    {
+        NONE,
+        OAUTH2,
+    }
+
     private String credential;
     private String token;
     private URI restUri;
+    private Security security = Security.NONE;
 
     public Optional<String> getToken()
     {
         return Optional.ofNullable(token);
     }
 
-    @Config("iceberg.rest.token")
+    @Config("iceberg.rest.oauth2.token")
     @ConfigDescription("The Bearer token which will be used for interactions with the server")
     @ConfigSecuritySensitive
     public IcebergRestCatalogConfig setToken(String token)
@@ -47,7 +55,7 @@ public class IcebergRestCatalogConfig
         return Optional.ofNullable(credential);
     }
 
-    @Config("iceberg.rest.credential")
+    @Config("iceberg.rest.oauth2.credential")
     @ConfigDescription("The credential to exchange for a token in the OAuth2 client credentials flow with the server")
     @ConfigSecuritySensitive
     public IcebergRestCatalogConfig setCredential(String credential)
@@ -72,6 +80,19 @@ public class IcebergRestCatalogConfig
         else {
             this.restUri = URI.create(uri);
         }
+        return this;
+    }
+
+    @NotNull
+    public Security getSecurity()
+    {
+        return security;
+    }
+
+    @Config("iceberg.rest.security")
+    public IcebergRestCatalogConfig setSecurity(Security security)
+    {
+        this.security = security;
         return this;
     }
 }

@@ -88,11 +88,14 @@ Property Name                                        Description
 ``iceberg.rest.uri``                       REST server API endpoint URI (required).
                                            Example: ``http://iceberg-with-rest:8181``
 
-``iceberg.rest.token``                     The Bearer token which will be used for interactions
+``iceberg.rest.security``                  The type of security to use (default: ``NONE``).
+                                           Example: ``OAUTH2``
+
+``iceberg.rest.oauth2.token``              The Bearer token which will be used for interactions
                                            with the server.
                                            Example: ``AbCdEf123456``
 
-``iceberg.rest.credential``                The credential to exchange for a token in the OAuth2 client
+``iceberg.rest.oauth2.credential``         The credential to exchange for a token in the OAuth2 client
                                            credentials flow with the server.
                                            Example: ``AbCdEf123456``
 ========================================== ============================================================

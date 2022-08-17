@@ -42,6 +42,7 @@ public class TrinoIcebergRestCatalogFactory
     private final URI serverUri;
     private final Optional<String> credential;
     private final Optional<String> token;
+    private final IcebergRestCatalogConfig.Security security;
 
     private volatile RESTSessionCatalog icebergCatalog;
 
@@ -57,6 +58,7 @@ public class TrinoIcebergRestCatalogFactory
         this.serverUri = restConfig.getBaseUri();
         this.credential = restConfig.getCredential();
         this.token = restConfig.getToken();
+        this.security = restConfig.getSecurity();
     }
 
     @Override
@@ -69,8 +71,10 @@ public class TrinoIcebergRestCatalogFactory
                     properties.put(CatalogProperties.URI, serverUri.toString());
                     properties.put(CatalogProperties.FILE_IO_IMPL, "org.apache.iceberg.io.ResolvingFileIO");
                     properties.put("trino-version", trinoVersion);
-                    credential.ifPresent(v -> properties.put(OAuth2Properties.CREDENTIAL, v));
-                    token.ifPresent(v -> properties.put(OAuth2Properties.TOKEN, v));
+                    if (security == IcebergRestCatalogConfig.Security.OAUTH2) {
+                        credential.ifPresent(v -> properties.put(OAuth2Properties.CREDENTIAL, v));
+                        token.ifPresent(v -> properties.put(OAuth2Properties.TOKEN, v));
+                    }
 
                     icebergCatalog = new RESTSessionCatalog();
                     icebergCatalog.setConf(ConfigurationUtils.getInitialConfiguration());

@@ -29,6 +29,7 @@ public class TestIcebergRestCatalogConfig
     {
         assertRecordedDefaults(recordDefaults(IcebergRestCatalogConfig.class)
                 .setBaseUri(null)
+                .setSecurity(IcebergRestCatalogConfig.Security.NONE)
                 .setCredential(null)
                 .setToken(null));
     }
@@ -38,14 +39,16 @@ public class TestIcebergRestCatalogConfig
     {
         Map<String, String> properties = ImmutableMap.<String, String>builder()
                 .put("iceberg.rest.uri", "http://localhost:1234")
-                .put("iceberg.rest.token", "token")
-                .put("iceberg.rest.credential", "credential")
+                .put("iceberg.rest.security", "OAUTH2")
+                .put("iceberg.rest.oauth2.token", "token")
+                .put("iceberg.rest.oauth2.credential", "credential")
                 .buildOrThrow();
 
         IcebergRestCatalogConfig expected = new IcebergRestCatalogConfig()
                 .setBaseUri("http://localhost:1234")
                 .setCredential("credential")
-                .setToken("token");
+                .setToken("token")
+                .setSecurity(IcebergRestCatalogConfig.Security.OAUTH2);
 
         assertFullMapping(properties, expected);
     }

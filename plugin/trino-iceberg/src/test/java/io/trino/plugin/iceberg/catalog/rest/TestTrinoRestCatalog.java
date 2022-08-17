@@ -16,7 +16,7 @@ package io.trino.plugin.iceberg.catalog.rest;
 import io.trino.plugin.base.CatalogName;
 import io.trino.plugin.iceberg.BaseTrinoCatalogTest;
 import io.trino.plugin.iceberg.catalog.TrinoCatalog;
-import org.apache.iceberg.rest.DelegatingRESTSessionCatalog;
+import org.apache.iceberg.rest.DelegatingRestSessionCatalog;
 import org.apache.iceberg.rest.RESTSessionCatalog;
 import org.assertj.core.util.Files;
 
@@ -35,9 +35,9 @@ public class TestTrinoRestCatalog
         warehouseLocation.deleteOnExit();
 
         String catalogName = "iceberg_rest";
-        RESTSessionCatalog restSessionCatalog = DelegatingRESTSessionCatalog
+        RESTSessionCatalog restSessionCatalog = DelegatingRestSessionCatalog
                 .builder()
-                .delegate(RESTCatalogTestUtils.backendCatalog(warehouseLocation))
+                .delegate(RestCatalogTestUtils.backendCatalog(warehouseLocation))
                 .build();
 
         restSessionCatalog.initialize(catalogName, Collections.emptyMap());

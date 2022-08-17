@@ -5735,9 +5735,7 @@ public abstract class BaseIcebergConnectorTest
 
         String baseTableName = "test_rename_target_" + randomTableSuffix();
 
-        int maxLength = 255;
-
-        String validTargetTableName = baseTableName + "z".repeat(maxLength - baseTableName.length());
+        String validTargetTableName = baseTableName + "z".repeat(maxTableRenameLength() - baseTableName.length());
         assertUpdate("ALTER TABLE " + sourceTableName + " RENAME TO " + validTargetTableName);
         assertTrue(getQueryRunner().tableExists(getSession(), validTargetTableName));
         assertQuery("SELECT x FROM " + validTargetTableName, "VALUES 123");
@@ -5748,6 +5746,11 @@ public abstract class BaseIcebergConnectorTest
         assertThatThrownBy(() -> assertUpdate("ALTER TABLE " + sourceTableName + " RENAME TO " + invalidTargetTableName))
                 .satisfies(this::verifyTableNameLengthFailurePermissible);
         assertFalse(getQueryRunner().tableExists(getSession(), invalidTargetTableName));
+    }
+
+    protected int maxTableRenameLength()
+    {
+        return 255;
     }
 
     @Override

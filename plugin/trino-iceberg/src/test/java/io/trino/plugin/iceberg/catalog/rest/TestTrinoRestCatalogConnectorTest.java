@@ -24,12 +24,13 @@ import io.trino.testing.QueryRunner;
 import io.trino.testing.TestingConnectorBehavior;
 import io.trino.tpch.TpchTable;
 import org.apache.iceberg.catalog.Catalog;
-import org.apache.iceberg.rest.DelegatingRESTSessionCatalog;
+import org.apache.iceberg.rest.DelegatingRestSessionCatalog;
 import org.assertj.core.util.Files;
 import org.testng.SkipException;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import static io.trino.plugin.iceberg.IcebergFileFormat.PARQUET;
 import static io.trino.testing.MaterializedResult.DEFAULT_PRECISION;
@@ -62,9 +63,9 @@ public class TestTrinoRestCatalogConnectorTest
         File warehouseLocation = Files.newTemporaryFolder();
         warehouseLocation.deleteOnExit();
 
-        Catalog backend = RESTCatalogTestUtils.backendCatalog(warehouseLocation);
+        Catalog backend = RestCatalogTestUtils.backendCatalog(warehouseLocation);
 
-        DelegatingRESTSessionCatalog delegatingCatalog = DelegatingRESTSessionCatalog
+        DelegatingRestSessionCatalog delegatingCatalog = DelegatingRestSessionCatalog
                 .builder().delegate(backend).build();
 
         TestingHttpServer testServer = delegatingCatalog.testServer();
@@ -87,21 +88,35 @@ public class TestTrinoRestCatalogConnectorTest
     }
 
     @Override
-    public void testCreateSchemaWithLongName()
+    protected OptionalInt maxSchemaNameLength()
     {
-        throw new SkipException("We're hitting max URI length before hitting the limit of the backing catalog");
+        // 4096 (configured limit) - 28 (additional row metadata)
+        return OptionalInt.of(4096 - 28);
     }
 
     @Override
-    public void testCreateTableWithLongTableName()
+    protected void verifySchemaNameLengthFailurePermissible(Throwable e)
     {
-        throw new SkipException("We're hitting max URI length before hitting the limit of the backing catalog");
+        assertThat(e).hasMessageContaining("Failed to execute");
     }
 
     @Override
-    public void testRenameTableToLongTableName()
+    protected OptionalInt maxTableNameLength()
     {
-        throw new SkipException("We're hitting max URI length before hitting the limit of the backing catalog");
+        return OptionalInt.of(255);
+    }
+
+    @Override
+    protected void verifyTableNameLengthFailurePermissible(Throwable e)
+    {
+        assertThat(e).hasMessageMatching(".*Failed to create.*|.*Failed to execute.*");
+    }
+
+    @Override
+    protected int maxTableRenameLength()
+    {
+        // 4096 (configured limit) - 179 (additional row metadata)
+        return 3917;
     }
 
     @Override

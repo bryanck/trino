@@ -26,13 +26,13 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
-public class DelegatingRESTSessionCatalog
+public class DelegatingRestSessionCatalog
         extends RESTSessionCatalog
 {
     private RESTCatalogAdapter adapter;
     private Catalog delegate;
 
-    DelegatingRESTSessionCatalog(RESTCatalogAdapter adapter, Catalog delegate)
+    DelegatingRestSessionCatalog(RESTCatalogAdapter adapter, Catalog delegate)
     {
         super((properties) -> adapter);
         this.adapter = adapter;
@@ -82,11 +82,11 @@ public class DelegatingRESTSessionCatalog
             return this;
         }
 
-        public DelegatingRESTSessionCatalog build()
+        public DelegatingRestSessionCatalog build()
         {
             requireNonNull(delegate, "Delegate must be set");
 
-            return new DelegatingRESTSessionCatalog(new RESTCatalogAdapter(delegate), delegate);
+            return new DelegatingRestSessionCatalog(new RESTCatalogAdapter(delegate), delegate);
         }
     }
 }

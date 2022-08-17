@@ -32,14 +32,14 @@ import org.assertj.core.util.Files;
 
 import java.io.File;
 
-public final class RESTCatalogTestUtils
+public final class RestCatalogTestUtils
 {
-    private RESTCatalogTestUtils() {}
+    private RestCatalogTestUtils() {}
 
     public static Catalog backendCatalog(File warehouseLocation)
     {
         ImmutableMap.Builder<String, String> properties = ImmutableMap.builder();
-        properties.put(CatalogProperties.URI, "jdbc:sqlite:file:" + Files.newTemporaryFile().getAbsolutePath() + "_mode=memory");
+        properties.put(CatalogProperties.URI, "jdbc:sqlite:file:" + Files.newTemporaryFile().getAbsolutePath() + "_mode=memory?limit_length=4096");
         properties.put(JdbcCatalog.PROPERTY_PREFIX + "username", "user");
         properties.put(JdbcCatalog.PROPERTY_PREFIX + "password", "password");
         properties.put(CatalogProperties.WAREHOUSE_LOCATION, warehouseLocation.toPath().resolve("iceberg_data").toFile().getAbsolutePath());

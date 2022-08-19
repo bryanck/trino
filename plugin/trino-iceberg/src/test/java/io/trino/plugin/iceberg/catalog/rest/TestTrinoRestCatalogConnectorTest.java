@@ -32,11 +32,9 @@ import java.io.File;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-import static io.trino.plugin.iceberg.IcebergFileFormat.PARQUET;
 import static io.trino.testing.MaterializedResult.DEFAULT_PRECISION;
 import static io.trino.tpch.TpchTable.LINE_ITEM;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestTrinoRestCatalogConnectorTest
         extends TestIcebergParquetConnectorTest
@@ -103,7 +101,10 @@ public class TestTrinoRestCatalogConnectorTest
     @Override
     protected OptionalInt maxTableNameLength()
     {
-        return OptionalInt.of(255);
+        // This value depends on metastore type
+        // The connector appends uuids to the end of all table names
+        // 33 is the length of random suffix. e.g. {table name}-142763c594d54e4b9329a98f90528caf
+        return OptionalInt.of(255 - 33);
     }
 
     @Override
@@ -115,8 +116,8 @@ public class TestTrinoRestCatalogConnectorTest
     @Override
     protected int maxTableRenameLength()
     {
-        // 4096 (configured limit) - 179 (additional row metadata)
-        return 3917;
+        // 4096 (configured limit) - 179 (additional row metadata) - 33 (length of random table suffix)
+        return 4096 - 179 - 33;
     }
 
     @Override
@@ -146,38 +147,6 @@ public class TestTrinoRestCatalogConnectorTest
                         "WITH \\(\n" +
                         "\\s+location = '.*/iceberg_data/tpch'\n" +
                         "\\)");
-    }
-
-    @Override
-    public void testShowCreateTable()
-    {
-        // overridden due to not supporting unique table locations
-        File tempDir = getDistributedQueryRunner().getCoordinator().getBaseDataDir().toFile();
-        assertThat((String) computeActual("SHOW CREATE TABLE orders").getOnlyValue())
-                .matches("\\QCREATE TABLE iceberg.tpch.orders (\n" +
-                        "   orderkey bigint,\n" +
-                        "   custkey bigint,\n" +
-                        "   orderstatus varchar,\n" +
-                        "   totalprice double,\n" +
-                        "   orderdate date,\n" +
-                        "   orderpriority varchar,\n" +
-                        "   clerk varchar,\n" +
-                        "   shippriority integer,\n" +
-                        "   comment varchar\n" +
-                        ")\n" +
-                        "WITH (\n" +
-                        "   format = '" + PARQUET.name() + "',\n" +
-                        "   format_version = 2,\n" +
-                        "   location = '" + tempDir + "/iceberg_data/tpch/orders'\n" +
-                        ")");
-    }
-
-    @Override
-    public void testTableNameCollision()
-    {
-        assertThatThrownBy(super::testTableNameCollision)
-                .hasMessageContaining("Cannot create a table on a non-empty location:")
-                .hasMessageContaining("set 'iceberg.unique-table-location=true' in your Iceberg catalog properties to use unique table locations for every table");
     }
 
     @Override

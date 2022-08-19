@@ -19,6 +19,7 @@ import io.jsonwebtoken.impl.DefaultJwtBuilder;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;
 import io.trino.plugin.base.CatalogName;
 import io.trino.plugin.iceberg.ColumnIdentity;
+import io.trino.plugin.iceberg.IcebergSchemaProperties;
 import io.trino.plugin.iceberg.IcebergUtil;
 import io.trino.plugin.iceberg.catalog.TrinoCatalog;
 import io.trino.spi.TrinoException;
@@ -29,6 +30,7 @@ import io.trino.spi.connector.ConnectorViewDefinition;
 import io.trino.spi.connector.SchemaTableName;
 import io.trino.spi.connector.TableNotFoundException;
 import io.trino.spi.security.TrinoPrincipal;
+import org.apache.hadoop.fs.Path;
 import org.apache.iceberg.BaseTable;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
@@ -57,6 +59,7 @@ import static io.trino.plugin.iceberg.IcebergErrorCode.ICEBERG_CATALOG_ERROR;
 import static io.trino.plugin.iceberg.IcebergTableProperties.LOCATION_PROPERTY;
 import static io.trino.spi.StandardErrorCode.NOT_SUPPORTED;
 import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 
 public class TrinoRestCatalog
         implements TrinoCatalog
@@ -64,17 +67,20 @@ public class TrinoRestCatalog
     private final RESTSessionCatalog sessionCatalog;
     private final CatalogName catalogName;
     private final String trinoVersion;
+    private final boolean useUniqueTableLocation;
 
     private final ConcurrentHashMap<String, Table> tableCache = new ConcurrentHashMap<>();
 
     public TrinoRestCatalog(
             RESTSessionCatalog sessionCatalog,
             CatalogName catalogName,
-            String trinoVersion)
+            String trinoVersion,
+            boolean useUniqueTableLocation)
     {
         this.sessionCatalog = sessionCatalog;
         this.catalogName = catalogName;
         this.trinoVersion = trinoVersion;
+        this.useUniqueTableLocation = useUniqueTableLocation;
     }
 
     @Override
@@ -211,8 +217,22 @@ public class TrinoRestCatalog
     @Override
     public String defaultTableLocation(ConnectorSession session, SchemaTableName schemaTableName)
     {
-        // TODO: backing catalog does not use this currently
-        return null;
+        String tableName = createNewTableName(schemaTableName.getTableName());
+
+        Map<String, String> properties = sessionCatalog.loadNamespaceMetadata(convert(session), Namespace.of(schemaTableName.getSchemaName()));
+        String databaseLocation = properties.get(IcebergSchemaProperties.LOCATION_PROPERTY);
+        checkArgument(databaseLocation != null, "location must be set for %s", schemaTableName.getSchemaName());
+
+        return new Path(databaseLocation, tableName).toString();
+    }
+
+    private String createNewTableName(String baseTableName)
+    {
+        String tableName = baseTableName;
+        if (useUniqueTableLocation) {
+            tableName += "-" + randomUUID().toString().replace("-", "");
+        }
+        return tableName;
     }
 
     @Override

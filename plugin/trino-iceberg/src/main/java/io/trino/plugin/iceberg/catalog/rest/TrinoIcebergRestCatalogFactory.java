@@ -18,6 +18,7 @@ import io.airlift.log.Logger;
 import io.trino.hdfs.ConfigurationUtils;
 import io.trino.plugin.base.CatalogName;
 import io.trino.plugin.hive.NodeVersion;
+import io.trino.plugin.iceberg.IcebergConfig;
 import io.trino.plugin.iceberg.catalog.TrinoCatalog;
 import io.trino.plugin.iceberg.catalog.TrinoCatalogFactory;
 import io.trino.spi.security.ConnectorIdentity;
@@ -43,6 +44,7 @@ public class TrinoIcebergRestCatalogFactory
     private final Optional<String> credential;
     private final Optional<String> token;
     private final IcebergRestCatalogConfig.Security security;
+    private final boolean isUniqueTableLocation;
 
     private volatile RESTSessionCatalog icebergCatalog;
 
@@ -50,6 +52,7 @@ public class TrinoIcebergRestCatalogFactory
     public TrinoIcebergRestCatalogFactory(
             CatalogName catalogName,
             IcebergRestCatalogConfig restConfig,
+            IcebergConfig icebergConfig,
             NodeVersion nodeVersion)
     {
         this.catalogName = requireNonNull(catalogName, "catalogName is null");
@@ -59,6 +62,8 @@ public class TrinoIcebergRestCatalogFactory
         this.credential = restConfig.getCredential();
         this.token = restConfig.getToken();
         this.security = restConfig.getSecurity();
+        requireNonNull(icebergConfig, "icebergConfig is null");
+        this.isUniqueTableLocation = icebergConfig.isUniqueTableLocation();
     }
 
     @Override
@@ -90,6 +95,6 @@ public class TrinoIcebergRestCatalogFactory
             }
         }
 
-        return new TrinoRestCatalog(icebergCatalog, catalogName, trinoVersion);
+        return new TrinoRestCatalog(icebergCatalog, catalogName, trinoVersion, isUniqueTableLocation);
     }
 }

@@ -42,7 +42,7 @@ public class TestTrinoRestCatalog
 
         restSessionCatalog.initialize(catalogName, Collections.emptyMap());
 
-        return new TrinoRestCatalog(restSessionCatalog, new CatalogName(catalogName), "test");
+        return new TrinoRestCatalog(restSessionCatalog, new CatalogName(catalogName), "test", useUniqueTableLocations);
     }
 
     @Override

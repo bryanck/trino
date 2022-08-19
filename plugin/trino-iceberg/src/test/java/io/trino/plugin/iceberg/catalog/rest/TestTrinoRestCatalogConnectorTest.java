@@ -129,12 +129,14 @@ public class TestTrinoRestCatalogConnectorTest
     @Override
     public void testCreateTableAsSelectSchemaNotFound()
     {
+        // TODO: Remove after resolution of https://github.com/apache/iceberg/issues/5587
         throw new SkipException("Backing catalog creates schema automatically.");
     }
 
     @Override
     public void testCreateTableSchemaNotFound()
     {
+        // TODO: Remove after resolution of https://github.com/apache/iceberg/issues/5587
         throw new SkipException("Backing catalog creates schema automatically.");
     }
 

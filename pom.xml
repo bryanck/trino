@@ -70,6 +70,7 @@
         <dep.casandra.version>4.14.0</dep.casandra.version>
         <dep.minio.version>7.1.4</dep.minio.version>
         <dep.iceberg.version>0.14.0</dep.iceberg.version>
+        <dep.aws-sdkv2.version>2.17.151</dep.aws-sdkv2.version>
 
         <dep.docker.images.version>65</dep.docker.images.version>
 

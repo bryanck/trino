@@ -16,7 +16,6 @@
     <properties>
         <air.main.basedir>${project.parent.basedir}</air.main.basedir>
         <dep.iceberg.version>0.14.0</dep.iceberg.version>
-        <dep.aws-sdkv2.version>2.17.151</dep.aws-sdkv2.version>
 
         <!--
           Project's default for air.test.parallel is 'methods'. By design, 'instances' runs all the methods in the same instance in the same thread,

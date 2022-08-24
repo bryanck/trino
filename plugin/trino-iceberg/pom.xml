@@ -101,11 +101,6 @@
 
         <dependency>
             <groupId>io.airlift</groupId>
-            <artifactId>http-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.airlift</groupId>
             <artifactId>json</artifactId>
         </dependency>
 
@@ -114,10 +109,6 @@
             <artifactId>log</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.airlift</groupId>
-            <artifactId>node</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>io.airlift</groupId>
@@ -441,12 +432,12 @@
             <groupId>io.airlift</groupId>
             <artifactId>http-server</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.airlift</groupId>
-                    <artifactId>node</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>node</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -499,17 +490,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <ignoredDependencies>
-                        <ignoredDependency>org.apache.iceberg:iceberg-aws</ignoredDependency>
-                        <ignoredDependency>io.airlift:http-client</ignoredDependency>
-                        <ignoredDependency>io.airlift:node</ignoredDependency>
-                    </ignoredDependencies>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>

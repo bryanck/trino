@@ -14,7 +14,7 @@
 package io.trino.plugin.iceberg.catalog.rest;
 
 import com.google.common.collect.ImmutableMap;
-import io.airlift.log.Logger;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.trino.hdfs.ConfigurationUtils;
 import io.trino.plugin.base.CatalogName;
 import io.trino.plugin.hive.NodeVersion;
@@ -37,8 +37,6 @@ import static java.util.Objects.requireNonNull;
 public class TrinoIcebergRestCatalogFactory
         implements TrinoCatalogFactory
 {
-    private static final Logger log = Logger.get(TrinoIcebergRestCatalogFactory.class);
-
     private final CatalogName catalogName;
     private final String trinoVersion;
     private final URI serverUri;
@@ -47,7 +45,8 @@ public class TrinoIcebergRestCatalogFactory
     private final Optional<String> token;
     private final boolean isUniqueTableLocation;
 
-    private volatile RESTSessionCatalog icebergCatalog;
+    @GuardedBy("this")
+    private RESTSessionCatalog icebergCatalog;
 
     @Inject
     public TrinoIcebergRestCatalogFactory(

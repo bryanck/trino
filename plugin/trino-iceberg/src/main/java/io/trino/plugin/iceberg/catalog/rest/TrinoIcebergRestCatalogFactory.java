@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import java.net.URI;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 public class TrinoIcebergRestCatalogFactory
@@ -41,9 +42,9 @@ public class TrinoIcebergRestCatalogFactory
     private final CatalogName catalogName;
     private final String trinoVersion;
     private final URI serverUri;
+    private final IcebergRestCatalogConfig.Security security;
     private final Optional<String> credential;
     private final Optional<String> token;
-    private final IcebergRestCatalogConfig.Security security;
     private final boolean isUniqueTableLocation;
 
     private volatile RESTSessionCatalog icebergCatalog;
@@ -67,32 +68,23 @@ public class TrinoIcebergRestCatalogFactory
     }
 
     @Override
-    public TrinoCatalog create(ConnectorIdentity identity)
+    public synchronized TrinoCatalog create(ConnectorIdentity identity)
     {
         if (icebergCatalog == null) {
-            synchronized (this) {
-                if (icebergCatalog == null) {
-                    ImmutableMap.Builder<String, String> properties = ImmutableMap.builder();
-                    properties.put(CatalogProperties.URI, serverUri.toString());
-                    properties.put(CatalogProperties.FILE_IO_IMPL, "org.apache.iceberg.io.ResolvingFileIO");
-                    properties.put("trino-version", trinoVersion);
-                    if (security == IcebergRestCatalogConfig.Security.OAUTH2) {
-                        credential.ifPresent(v -> properties.put(OAuth2Properties.CREDENTIAL, v));
-                        token.ifPresent(v -> properties.put(OAuth2Properties.TOKEN, v));
-                    }
-
-                    icebergCatalog = new RESTSessionCatalog();
-                    icebergCatalog.setConf(ConfigurationUtils.getInitialConfiguration());
-                    try {
-                        icebergCatalog.initialize(catalogName.toString(), properties.buildOrThrow());
-                    }
-                    catch (Exception e) {
-                        icebergCatalog = null;
-                        log.error("REST session catalog initialization failed. Reason: %s", e.getMessage());
-                        throw e;
-                    }
-                }
+            ImmutableMap.Builder<String, String> properties = ImmutableMap.builder();
+            properties.put(CatalogProperties.URI, serverUri.toString());
+            properties.put("trino-version", trinoVersion);
+            if (security == IcebergRestCatalogConfig.Security.OAUTH2) {
+                checkArgument(credential.isPresent() ^ token.isPresent(), "OAuth2 requires either a credential or token");
+                credential.ifPresent(value -> properties.put(OAuth2Properties.CREDENTIAL, value));
+                token.ifPresent(value -> properties.put(OAuth2Properties.TOKEN, value));
             }
+
+            RESTSessionCatalog icebergCatalogInstance = new RESTSessionCatalog();
+            icebergCatalogInstance.setConf(ConfigurationUtils.getInitialConfiguration());
+            icebergCatalogInstance.initialize(catalogName.toString(), properties.buildOrThrow());
+
+            icebergCatalog = icebergCatalogInstance;
         }
 
         return new TrinoRestCatalog(icebergCatalog, catalogName, trinoVersion, isUniqueTableLocation);

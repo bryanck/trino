@@ -47,7 +47,7 @@ Configuration
 
 The connector supports multiple Iceberg catalog types, you may use either a Hive
 metastore service (HMS), AWS Glue, or a REST catalog. The catalog type is determined by the
-``iceberg.catalog.type`` property, it can be set to ``HIVE_METASTORE``, ``GLUE`` or ``REST``.
+``iceberg.catalog.type`` property, it can be set to ``HIVE_METASTORE``, ``GLUE``, or ``REST``.
 
 Hive metastore catalog
 ^^^^^^^^^^^^^^^^^^^^^^

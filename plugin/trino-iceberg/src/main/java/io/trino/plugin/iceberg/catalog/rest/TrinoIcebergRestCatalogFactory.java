@@ -14,7 +14,6 @@
 package io.trino.plugin.iceberg.catalog.rest;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.trino.hdfs.ConfigurationUtils;
 import io.trino.plugin.base.CatalogName;
 import io.trino.plugin.hive.NodeVersion;
@@ -26,6 +25,7 @@ import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.rest.RESTSessionCatalog;
 import org.apache.iceberg.rest.auth.OAuth2Properties;
 
+import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 
 import java.net.URI;
@@ -69,6 +69,8 @@ public class TrinoIcebergRestCatalogFactory
     @Override
     public synchronized TrinoCatalog create(ConnectorIdentity identity)
     {
+        // Creation of the RESTSessionCatalog is lazy due to required network calls
+        // for authorization and config route
         if (icebergCatalog == null) {
             ImmutableMap.Builder<String, String> properties = ImmutableMap.builder();
             properties.put(CatalogProperties.URI, serverUri.toString());

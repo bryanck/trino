@@ -76,7 +76,7 @@ public class TestTrinoRestCatalogConnectorTest
                         ImmutableMap.<String, String>builder()
                                 .put("iceberg.file-format", "PARQUET")
                                 .put("iceberg.catalog.type", "rest")
-                                .put("iceberg.rest.uri", testServer.getBaseUrl().toString())
+                                .put("iceberg.metastore.rest.uri", testServer.getBaseUrl().toString())
                                 .buildOrThrow())
                 .setInitialTables(ImmutableList.<TpchTable<?>>builder()
                         .addAll(REQUIRED_TPCH_TABLES)

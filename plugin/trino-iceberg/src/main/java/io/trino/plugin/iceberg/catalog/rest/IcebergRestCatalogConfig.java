@@ -36,14 +36,14 @@ public class IcebergRestCatalogConfig
     private String credential;
     private String token;
 
-    @NotEmpty(message = "iceberg.rest.uri cannot be empty")
+    @NotEmpty(message = "iceberg.metastore.rest.uri cannot be empty")
     @NotNull
     public URI getBaseUri()
     {
         return this.restUri;
     }
 
-    @Config("iceberg.rest.uri")
+    @Config("iceberg.metastore.rest.uri")
     @ConfigDescription("The URI to the REST server")
     public IcebergRestCatalogConfig setBaseUri(String uri)
     {
@@ -62,7 +62,7 @@ public class IcebergRestCatalogConfig
         return security;
     }
 
-    @Config("iceberg.rest.security")
+    @Config("iceberg.metastore.rest.security")
     @ConfigDescription("Authorization protocol to use when communicating with the REST catalog server")
     public IcebergRestCatalogConfig setSecurity(Security security)
     {
@@ -75,7 +75,7 @@ public class IcebergRestCatalogConfig
         return Optional.ofNullable(credential);
     }
 
-    @Config("iceberg.rest.oauth2.credential")
+    @Config("iceberg.metastore.rest.oauth2.credential")
     @ConfigDescription("The credential to exchange for a token in the OAuth2 client credentials flow with the server")
     @ConfigSecuritySensitive
     public IcebergRestCatalogConfig setCredential(String credential)
@@ -89,7 +89,7 @@ public class IcebergRestCatalogConfig
         return Optional.ofNullable(token);
     }
 
-    @Config("iceberg.rest.oauth2.token")
+    @Config("iceberg.metastore.rest.oauth2.token")
     @ConfigDescription("The Bearer token which will be used for interactions with the server")
     @ConfigSecuritySensitive
     public IcebergRestCatalogConfig setToken(String token)

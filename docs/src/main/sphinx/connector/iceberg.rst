@@ -82,29 +82,29 @@ In order to use the Iceberg REST catalog, ensure to configure the catalog type w
 ``iceberg.catalog.type=rest`` and provide further details with the following
 properties:
 
-========================================== ============================================================
+============================================== ============================================================
 Property Name                                        Description
-========================================== ============================================================
-``iceberg.rest.uri``                       REST server API endpoint URI (required).
-                                           Example: ``http://iceberg-with-rest:8181``
+============================================== ============================================================
+``iceberg.metastore.rest.uri``                 REST server API endpoint URI (required).
+                                               Example: ``http://iceberg-with-rest:8181``
 
-``iceberg.rest.security``                  The type of security to use (default: ``NONE``).
-                                           Example: ``OAUTH2``
+``iceberg.metastore.rest.security``            The type of security to use (default: ``NONE``).
+                                               Example: ``OAUTH2``
 
-``iceberg.rest.oauth2.token``              The Bearer token which will be used for interactions
-                                           with the server.
-                                           Example: ``AbCdEf123456``
+``iceberg.metastore.rest.oauth2.token``        The Bearer token which will be used for interactions
+                                               with the server.
+                                               Example: ``AbCdEf123456``
 
-``iceberg.rest.oauth2.credential``         The credential to exchange for a token in the OAuth2 client
-                                           credentials flow with the server.
-                                           Example: ``AbCdEf123456``
-========================================== ============================================================
+``iceberg.metastore.rest.oauth2.credential``   The credential to exchange for a token in the OAuth2 client
+                                               credentials flow with the server.
+                                               Example: ``AbCdEf123456``
+============================================== ============================================================
 
 .. code-block:: text
 
     connector.name=iceberg
     iceberg.catalog.type=rest
-    iceberg.rest.uri=http://iceberg-with-rest:8181
+    iceberg.metastore.rest.uri=http://iceberg-with-rest:8181
 
 
 General configuration

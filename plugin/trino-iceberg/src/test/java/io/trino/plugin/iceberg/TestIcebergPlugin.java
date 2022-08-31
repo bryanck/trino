@@ -220,10 +220,10 @@ public class TestIcebergPlugin
                         "test",
                         Map.of(
                                 "iceberg.catalog.type", "rest",
-                                "iceberg.rest.security", "OAUTH2",
-                                "iceberg.rest.oauth2.token", "token",
-                                "iceberg.rest.oauth2.credential", "credential",
-                                "iceberg.rest.uri", "https://foo:1234"),
+                                "iceberg.metastore.rest.security", "OAUTH2",
+                                "iceberg.metastore.rest.oauth2.token", "token",
+                                "iceberg.metastore.rest.oauth2.credential", "credential",
+                                "iceberg.metastore.rest.uri", "https://foo:1234"),
                         new TestingConnectorContext())
                 .shutdown();
     }

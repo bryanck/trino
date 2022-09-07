@@ -27,7 +27,9 @@ public class TestIcebergRestOAuth2Config
     @Test
     public void testDefaults()
     {
-        assertRecordedDefaults(recordDefaults(IcebergRestOAuth2Config.class));
+        assertRecordedDefaults(recordDefaults(IcebergRestOAuth2Config.class)
+                .setCredential(null)
+                .setToken(null));
     }
 
     @Test

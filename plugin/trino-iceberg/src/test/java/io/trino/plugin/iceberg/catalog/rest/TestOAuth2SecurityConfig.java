@@ -22,12 +22,12 @@ import static io.airlift.configuration.testing.ConfigAssertions.assertFullMappin
 import static io.airlift.configuration.testing.ConfigAssertions.assertRecordedDefaults;
 import static io.airlift.configuration.testing.ConfigAssertions.recordDefaults;
 
-public class TestIcebergRestOAuth2Config
+public class TestOAuth2SecurityConfig
 {
     @Test
     public void testDefaults()
     {
-        assertRecordedDefaults(recordDefaults(IcebergRestOAuth2Config.class)
+        assertRecordedDefaults(recordDefaults(OAuth2SecurityConfig.class)
                 .setCredential(null)
                 .setToken(null));
     }
@@ -40,7 +40,7 @@ public class TestIcebergRestOAuth2Config
                 .put("iceberg.metastore.rest.oauth2.credential", "credential")
                 .buildOrThrow();
 
-        IcebergRestOAuth2Config expected = new IcebergRestOAuth2Config()
+        OAuth2SecurityConfig expected = new OAuth2SecurityConfig()
                 .setCredential("credential")
                 .setToken("token");
 

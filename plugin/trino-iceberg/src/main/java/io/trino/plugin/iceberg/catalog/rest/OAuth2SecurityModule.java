@@ -18,12 +18,13 @@ import io.airlift.configuration.AbstractConfigurationAwareModule;
 
 import static io.airlift.configuration.ConfigBinder.configBinder;
 
-public class IcebergRestOAuth2Module
+public class OAuth2SecurityModule
         extends AbstractConfigurationAwareModule
 {
     @Override
     protected void setup(Binder binder)
     {
-        configBinder(binder).bindConfig(IcebergRestOAuth2Config.class);
+        configBinder(binder).bindConfig(OAuth2SecurityConfig.class);
+        binder.bind(SecurityParams.class).to(OAuth2SecurityParams.class);
     }
 }

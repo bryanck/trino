@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.trino.plugin.iceberg.catalog.rest;
 
 import io.airlift.configuration.Config;
@@ -20,7 +19,7 @@ import io.airlift.configuration.ConfigSecuritySensitive;
 
 import java.util.Optional;
 
-public class IcebergRestOAuth2Config
+public class OAuth2SecurityConfig
 {
     private String credential;
     private String token;
@@ -33,7 +32,7 @@ public class IcebergRestOAuth2Config
     @Config("iceberg.metastore.rest.oauth2.credential")
     @ConfigDescription("The credential to exchange for a token in the OAuth2 client credentials flow with the server")
     @ConfigSecuritySensitive
-    public IcebergRestOAuth2Config setCredential(String credential)
+    public OAuth2SecurityConfig setCredential(String credential)
     {
         this.credential = credential;
         return this;
@@ -47,7 +46,7 @@ public class IcebergRestOAuth2Config
     @Config("iceberg.metastore.rest.oauth2.token")
     @ConfigDescription("The Bearer token which will be used for interactions with the server")
     @ConfigSecuritySensitive
-    public IcebergRestOAuth2Config setToken(String token)
+    public OAuth2SecurityConfig setToken(String token)
     {
         this.token = token;
         return this;

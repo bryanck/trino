@@ -14,27 +14,14 @@
 package io.trino.plugin.iceberg.catalog.rest;
 
 import com.google.inject.Binder;
-import com.google.inject.Scopes;
 import io.airlift.configuration.AbstractConfigurationAwareModule;
-import io.trino.plugin.iceberg.catalog.TrinoCatalogFactory;
-import io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogConfig.Security;
 
-import static io.airlift.configuration.ConditionalModule.conditionalModule;
-import static io.airlift.configuration.ConfigBinder.configBinder;
-
-public class IcebergRestCatalogModule
+public class NoneSecurityModule
         extends AbstractConfigurationAwareModule
 {
     @Override
     protected void setup(Binder binder)
     {
-        configBinder(binder).bindConfig(IcebergRestCatalogConfig.class);
-        install(conditionalModule(
-                IcebergRestCatalogConfig.class,
-                config -> config.getSecurity() == Security.OAUTH2,
-                new OAuth2SecurityModule(),
-                new NoneSecurityModule()));
-
-        binder.bind(TrinoCatalogFactory.class).to(TrinoIcebergRestCatalogFactory.class).in(Scopes.SINGLETON);
+        binder.bind(SecurityParams.class);
     }
 }

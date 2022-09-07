@@ -20,6 +20,7 @@ import io.trino.plugin.hive.NodeVersion;
 import io.trino.plugin.iceberg.IcebergConfig;
 import io.trino.plugin.iceberg.catalog.TrinoCatalog;
 import io.trino.plugin.iceberg.catalog.TrinoCatalogFactory;
+import io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogConfig.Security;
 import io.trino.spi.security.ConnectorIdentity;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.rest.RESTSessionCatalog;
@@ -52,7 +53,7 @@ public class TrinoIcebergRestCatalogFactory
     public TrinoIcebergRestCatalogFactory(
             CatalogName catalogName,
             IcebergRestCatalogConfig restConfig,
-            IcebergRestOAuth2Config oAuth2Config,
+            SecurityParams securityParams,
             IcebergConfig icebergConfig,
             NodeVersion nodeVersion)
     {
@@ -61,9 +62,10 @@ public class TrinoIcebergRestCatalogFactory
         requireNonNull(restConfig, "restConfig is null");
         this.serverUri = restConfig.getBaseUri();
         this.security = restConfig.getSecurity();
-        if (oAuth2Config != null) {
-            this.credential = oAuth2Config.getCredential();
-            this.token = oAuth2Config.getToken();
+        if (restConfig.getSecurity() == Security.OAUTH2) {
+            OAuth2SecurityParams oAuth2Params = (OAuth2SecurityParams) securityParams;
+            this.credential = oAuth2Params.getConfig().getCredential();
+            this.token = oAuth2Params.getConfig().getToken();
         }
         else {
             this.credential = Optional.empty();

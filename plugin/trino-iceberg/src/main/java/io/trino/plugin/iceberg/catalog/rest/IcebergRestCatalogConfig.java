@@ -15,13 +15,11 @@ package io.trino.plugin.iceberg.catalog.rest;
 
 import io.airlift.configuration.Config;
 import io.airlift.configuration.ConfigDescription;
-import io.airlift.configuration.ConfigSecuritySensitive;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import java.net.URI;
-import java.util.Optional;
 
 public class IcebergRestCatalogConfig
 {
@@ -33,8 +31,6 @@ public class IcebergRestCatalogConfig
 
     private URI restUri;
     private Security security = Security.NONE;
-    private String credential;
-    private String token;
 
     @NotEmpty(message = "iceberg.metastore.rest.uri cannot be empty")
     @NotNull
@@ -67,34 +63,6 @@ public class IcebergRestCatalogConfig
     public IcebergRestCatalogConfig setSecurity(Security security)
     {
         this.security = security;
-        return this;
-    }
-
-    public Optional<String> getCredential()
-    {
-        return Optional.ofNullable(credential);
-    }
-
-    @Config("iceberg.metastore.rest.oauth2.credential")
-    @ConfigDescription("The credential to exchange for a token in the OAuth2 client credentials flow with the server")
-    @ConfigSecuritySensitive
-    public IcebergRestCatalogConfig setCredential(String credential)
-    {
-        this.credential = credential;
-        return this;
-    }
-
-    public Optional<String> getToken()
-    {
-        return Optional.ofNullable(token);
-    }
-
-    @Config("iceberg.metastore.rest.oauth2.token")
-    @ConfigDescription("The Bearer token which will be used for interactions with the server")
-    @ConfigSecuritySensitive
-    public IcebergRestCatalogConfig setToken(String token)
-    {
-        this.token = token;
         return this;
     }
 }

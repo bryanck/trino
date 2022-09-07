@@ -52,6 +52,7 @@ public class TrinoIcebergRestCatalogFactory
     public TrinoIcebergRestCatalogFactory(
             CatalogName catalogName,
             IcebergRestCatalogConfig restConfig,
+            IcebergRestOAuth2Config oAuth2Config,
             IcebergConfig icebergConfig,
             NodeVersion nodeVersion)
     {
@@ -59,9 +60,15 @@ public class TrinoIcebergRestCatalogFactory
         this.trinoVersion = requireNonNull(nodeVersion, "nodeVersion is null").toString();
         requireNonNull(restConfig, "restConfig is null");
         this.serverUri = restConfig.getBaseUri();
-        this.credential = restConfig.getCredential();
-        this.token = restConfig.getToken();
         this.security = restConfig.getSecurity();
+        if (oAuth2Config != null) {
+            this.credential = oAuth2Config.getCredential();
+            this.token = oAuth2Config.getToken();
+        }
+        else {
+            this.credential = Optional.empty();
+            this.token = Optional.empty();
+        }
         requireNonNull(icebergConfig, "icebergConfig is null");
         this.isUniqueTableLocation = icebergConfig.isUniqueTableLocation();
     }

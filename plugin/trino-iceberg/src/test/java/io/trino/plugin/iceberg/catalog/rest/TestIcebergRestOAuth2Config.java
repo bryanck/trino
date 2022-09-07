@@ -22,27 +22,25 @@ import static io.airlift.configuration.testing.ConfigAssertions.assertFullMappin
 import static io.airlift.configuration.testing.ConfigAssertions.assertRecordedDefaults;
 import static io.airlift.configuration.testing.ConfigAssertions.recordDefaults;
 
-public class TestIcebergRestCatalogConfig
+public class TestIcebergRestOAuth2Config
 {
     @Test
     public void testDefaults()
     {
-        assertRecordedDefaults(recordDefaults(IcebergRestCatalogConfig.class)
-                .setBaseUri(null)
-                .setSecurity(IcebergRestCatalogConfig.Security.NONE));
+        assertRecordedDefaults(recordDefaults(IcebergRestOAuth2Config.class));
     }
 
     @Test
     public void testExplicitPropertyMappings()
     {
         Map<String, String> properties = ImmutableMap.<String, String>builder()
-                .put("iceberg.metastore.rest.uri", "http://localhost:1234")
-                .put("iceberg.metastore.rest.security", "OAUTH2")
+                .put("iceberg.metastore.rest.oauth2.token", "token")
+                .put("iceberg.metastore.rest.oauth2.credential", "credential")
                 .buildOrThrow();
 
-        IcebergRestCatalogConfig expected = new IcebergRestCatalogConfig()
-                .setBaseUri("http://localhost:1234")
-                .setSecurity(IcebergRestCatalogConfig.Security.OAUTH2);
+        IcebergRestOAuth2Config expected = new IcebergRestOAuth2Config()
+                .setCredential("credential")
+                .setToken("token");
 
         assertFullMapping(properties, expected);
     }
